@@ -1301,6 +1301,7 @@ CDEFINES :=	-DANI_LITTLE_BYTE_ENDIAN \
 		-DWMI_CMD_STRINGS \
 		-DCONFIG_HDD_INIT_WITH_RTNL_LOCK \
 		-DMWS_COEX
+subdir-ccflags-y := $(call cc-disable-warning, misleading-indentation)
 
 subdir-ccflags-y := $(call cc-disable-warning, misleading-indentation)
 
