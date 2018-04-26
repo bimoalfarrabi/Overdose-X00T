@@ -1313,6 +1313,7 @@ CDEFINES :=	-DANI_LITTLE_BYTE_ENDIAN \
 		-DWMI_CMD_STRINGS \
 		-DCONFIG_HDD_INIT_WITH_RTNL_LOCK \
 		-DMWS_COEX
+subdir-ccflags-y := $(call cc-disable-warning, misleading-indentation)
 
 ifeq ($(CONFIG_WLAN_FEATURE_FIPS), y)
 CDEFINES += -DWLAN_FEATURE_FIPS
