@@ -47,6 +47,7 @@
 #include <linux/prefetch.h>
 #include <linux/printk.h>
 #include <linux/simple_lmk.h>
+#include <linux/devfreq_boost.h>
 
 #include <asm/tlbflush.h>
 #include <asm/div64.h>
@@ -303,6 +304,8 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
 	freeable = shrinker->count_objects(shrinker, shrinkctl);
 	if (freeable == 0)
 		return 0;
+
+	devfreq_boost_kick_max(DEVFREQ_MSM_CPUBW, 50);
 
 	/*
 	 * copy the current shrinker scan count into a local variable
