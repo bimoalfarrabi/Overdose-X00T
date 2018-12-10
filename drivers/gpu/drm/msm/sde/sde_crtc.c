@@ -955,10 +955,14 @@ void sde_crtc_commit_kickoff(struct drm_crtc *crtc)
 
 
 	SDE_ATRACE_BEGIN("crtc_commit");
-
-	cpu_input_boost_kick();
-	devfreq_boost_kick(DEVFREQ_MSM_CPUBW);
-
+	
+	#ifdef CONFIG_CPU_INPUT_BOOST
+	if (time_before(jiffies, last_input_time + msecs_to_jiffies(5000))) {
+		cpu_input_boost_kick();
+	        devfreq_boost_kick(DEVFREQ_MSM_CPUBW);
+	}
+        #endif
+        
 	list_for_each_entry(encoder, &dev->mode_config.encoder_list, head) {
 		if (encoder->crtc != crtc)
 			continue;
