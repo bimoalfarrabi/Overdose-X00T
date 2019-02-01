@@ -8,7 +8,7 @@
 	mkdir -p $KERNELDIR/built/
 	make ARCH=arm64 X00T_defconfig
 	make -j$(nproc --all) ARCH=arm64 \
-                      CC="$HOME/linux-x86/clang-4679922/bin/clang" \
+                      CC="$HOME/dragontc/bin/clang" \
                       CLANG_TRIPLE=aarch64-linux-gnu- \
                       CROSS_COMPILE="$HOME/aarch64-linux-gnu/bin/aarch64-linux-gnu-"
 	rm -rf $KERNELDIR/built
