@@ -2387,8 +2387,6 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
 			fp = to_flat_binder_object(hdr);
 			node = binder_get_node(proc, fp->binder);
 			if (node == NULL) {
-				pr_err("transaction release %d bad node %016llx\n",
-				       debug_id, (u64)fp->binder);
 				break;
 			}
 			binder_debug(BINDER_DEBUG_TRANSACTION,
@@ -2409,8 +2407,6 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
 				hdr->type == BINDER_TYPE_HANDLE, &rdata);
 
 			if (ret) {
-				pr_err("transaction release %d bad handle %d, ret = %d\n",
-				 debug_id, fp->handle, ret);
 				break;
 			}
 			binder_debug(BINDER_DEBUG_TRANSACTION,
@@ -2445,8 +2441,6 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
 						     off_start,
 						     offp - off_start);
 			if (!parent) {
-				pr_err("transaction release %d bad parent offset",
-				       debug_id);
 				continue;
 			}
 			/*
@@ -2459,15 +2453,11 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
 
 			fd_buf_size = sizeof(u32) * fda->num_fds;
 			if (fda->num_fds >= SIZE_MAX / sizeof(u32)) {
-				pr_err("transaction release %d invalid number of fds (%lld)\n",
-				       debug_id, (u64)fda->num_fds);
 				continue;
 			}
 			if (fd_buf_size > parent->length ||
 			    fda->parent_offset > parent->length - fd_buf_size) {
 				/* No space for all file descriptors here. */
-				pr_err("transaction release %d not enough space for %lld fds in buffer\n",
-				       debug_id, (u64)fda->num_fds);
 				continue;
 			}
 			fd_array = (u32 *)(parent_buffer + (uintptr_t)fda->parent_offset);
@@ -2475,8 +2465,6 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
 				task_close_fd(proc, fd_array[fd_index]);
 		} break;
 		default:
-			pr_err("transaction release %d bad object type %x\n",
-				debug_id, hdr->type);
 			break;
 		}
 	}
