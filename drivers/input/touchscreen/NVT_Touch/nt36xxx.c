@@ -2233,7 +2233,7 @@ static int32_t __init nvt_driver_init(void)
 	//---add i2c driver---
 	ret = i2c_add_driver(&nvt_i2c_driver);
 	if (ret) {
-		pr_err("%s: failed to add i2c driver", __func__);
+		//pr_err("%s: failed to add i2c driver", __func__);
 		goto err_driver;
 	}
 

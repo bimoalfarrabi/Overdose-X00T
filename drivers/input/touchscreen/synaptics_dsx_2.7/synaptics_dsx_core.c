@@ -770,14 +770,14 @@ static int syna_lcm_bias_power_init(struct synaptics_rmi4_data *rmi4_data)
 						"lcm_lab");
 	if (IS_ERR(rmi4_data->lcm_lab)) {
 		ret = PTR_ERR(rmi4_data->lcm_lab);
-		pr_err("Regulator get failed lcm_lab ret=%d", ret);
+		//pr_err("Regulator get failed lcm_lab ret=%d", ret);
 		goto _end;
 	}
 	if (regulator_count_voltages(rmi4_data->lcm_lab) > 0) {
 		ret = regulator_set_voltage(rmi4_data->lcm_lab, LCM_LAB_MIN_UV,
 						LCM_LAB_MAX_UV);
 		if (ret) {
-			pr_err("Regulator set_vtg failed lcm_lab ret=%d", ret);
+			//pr_err("Regulator set_vtg failed lcm_lab ret=%d", ret);
 			goto reg_lcm_lab_put;
 		}
 	}
@@ -786,14 +786,14 @@ static int syna_lcm_bias_power_init(struct synaptics_rmi4_data *rmi4_data)
 						"lcm_ibb");
 	if (IS_ERR(rmi4_data->lcm_ibb)) {
 		ret = PTR_ERR(rmi4_data->lcm_ibb);
-		pr_err("Regulator get failed lcm_ibb ret=%d", ret);
+		//pr_err("Regulator get failed lcm_ibb ret=%d", ret);
 		goto reg_set_lcm_lab_vtg;
 	}
 	if (regulator_count_voltages(rmi4_data->lcm_ibb) > 0) {
 		ret = regulator_set_voltage(rmi4_data->lcm_ibb, LCM_IBB_MIN_UV,
 						LCM_IBB_MAX_UV);
 		if (ret) {
-			pr_err("Regulator set_vtg failed lcm_lab ret=%d", ret);
+			//pr_err("Regulator set_vtg failed lcm_lab ret=%d", ret);
 			goto reg_lcm_ibb_put;
 		}
 	}
@@ -846,7 +846,7 @@ static int syna_lcm_power_source_ctrl(struct synaptics_rmi4_data *rmi4_data,
 				rc = regulator_enable(rmi4_data->lcm_lab);
 				if (rc) {
 					atomic_dec(&(rmi4_data->lcm_lab_power));
-					pr_err("Regulator lcm_lab enable failed rc=%d", rc);
+					//pr_err("Regulator lcm_lab enable failed rc=%d", rc);
 				}
 			} else
 				atomic_dec(&(rmi4_data->lcm_lab_power));
@@ -855,7 +855,7 @@ static int syna_lcm_power_source_ctrl(struct synaptics_rmi4_data *rmi4_data,
 				rc = regulator_enable(rmi4_data->lcm_ibb);
 				if (rc) {
 					atomic_dec(&(rmi4_data->lcm_ibb_power));
-					pr_err("Regulator lcm_ibb enable failed rc=%d", rc);
+					//pr_err("Regulator lcm_ibb enable failed rc=%d", rc);
 				}
 			} else
 				atomic_dec(&(rmi4_data->lcm_ibb_power));
@@ -865,7 +865,7 @@ static int syna_lcm_power_source_ctrl(struct synaptics_rmi4_data *rmi4_data,
 				rc = regulator_disable(rmi4_data->lcm_lab);
 				if (rc) {
 					atomic_inc(&(rmi4_data->lcm_lab_power));
-					pr_err("Regulator lcm_lab disable failed rc=%d", rc);
+					//pr_err("Regulator lcm_lab disable failed rc=%d", rc);
 				}
 			} else
 				atomic_inc(&(rmi4_data->lcm_lab_power));
@@ -874,7 +874,7 @@ static int syna_lcm_power_source_ctrl(struct synaptics_rmi4_data *rmi4_data,
 				rc = regulator_disable(rmi4_data->lcm_ibb);
 				if (rc)	{
 					atomic_inc(&(rmi4_data->lcm_ibb_power));
-					pr_err("Regulator lcm_ibb disable failed rc=%d", rc);
+					//pr_err("Regulator lcm_ibb disable failed rc=%d", rc);
 				}
 			} else
 				atomic_inc(&(rmi4_data->lcm_ibb_power));
@@ -1125,7 +1125,7 @@ static ssize_t gesture_store(struct kobject *kobj, struct kobj_attribute *attr,
 		syna_gesture_mode = 0x1FF;
 		syna_rmi4_data->enable_wakeup_gesture = 1;
 	}
-	pr_err("syna_gesture_mode = 0x%x, enable_wakeup_gesture = %d \n", (unsigned int)syna_gesture_mode, syna_rmi4_data->enable_wakeup_gesture);
+	//pr_err("syna_gesture_mode = 0x%x, enable_wakeup_gesture = %d \n", (unsigned int)syna_gesture_mode, syna_rmi4_data->enable_wakeup_gesture);
         return count;
 }
 
@@ -1149,7 +1149,7 @@ static ssize_t screengesture_store(struct kobject *kobj, struct kobj_attribute *
 		syna_gesture_mode = 0x1FF;
 		syna_rmi4_data->enable_wakeup_gesture = 1;
 	}
-	pr_err("syna_gesture_mode = 0x%x, enable_wakeup_gesture = %d \n", (unsigned int)syna_gesture_mode, syna_rmi4_data->enable_wakeup_gesture);
+	//pr_err("syna_gesture_mode = 0x%x, enable_wakeup_gesture = %d \n", (unsigned int)syna_gesture_mode, syna_rmi4_data->enable_wakeup_gesture);
         return count;
 }
 
@@ -1164,16 +1164,16 @@ int create_gesture_node_syna(void) {
         if(!gesture_kobject)
                 return -ENOMEM;
 
-        pr_err("[Syna-ts] : Gesture Node initialized successfully \n");
+        //pr_err("[Syna-ts] : Gesture Node initialized successfully \n");
 
         error = sysfs_create_file(gesture_kobject, &gesture_attribute.attr);
         if (error) {
-                pr_err("[Syna-ts] : failed to create the gesture_node file in /sys/kernel/touchpanel \n");
+                //pr_err("[Syna-ts] : failed to create the gesture_node file in /sys/kernel/touchpanel \n");
         }
 
         error2 = sysfs_create_file(gesture_kobject, &screengesture_attribute.attr);
         if (error) {
-                pr_err("[Syna-ts] : failed to create the gesture_node file in /sys/kernel/touchpanel \n");
+                //pr_err("[Syna-ts] : failed to create the gesture_node file in /sys/kernel/touchpanel \n");
         }
 
         return error;
@@ -3742,8 +3742,8 @@ static int synaptics_rmi4_gpio_setup(int gpio, bool config, int dir, int state)
 
 		retval = gpio_request(gpio, buf);
 		if (retval) {
-			pr_err("%s: Failed to get gpio %d (code: %d)",
-					__func__, gpio, retval);
+			//pr_err("%s: Failed to get gpio %d (code: %d)",
+					//__func__, gpio, retval);
 			return retval;
 		}
 
@@ -3752,8 +3752,8 @@ static int synaptics_rmi4_gpio_setup(int gpio, bool config, int dir, int state)
 		else
 			retval = gpio_direction_output(gpio, state);
 		if (retval) {
-			pr_err("%s: Failed to set gpio %d direction",
-					__func__, gpio);
+			//pr_err("%s: Failed to set gpio %d direction",
+					//__func__, gpio);
 			return retval;
 		}
 	} else {
@@ -4556,8 +4556,8 @@ void synaptics_rmi4_new_function(struct synaptics_rmi4_exp_fn *exp_fn,
 	if (insert) {
 		exp_fhandler = kzalloc(sizeof(*exp_fhandler), GFP_KERNEL);
 		if (!exp_fhandler) {
-			pr_err("%s: Failed to alloc mem for expansion function\n",
-					__func__);
+			//pr_err("%s: Failed to alloc mem for expansion function\n",
+					//__func__);
 			goto exit;
 		}
 		exp_fhandler->exp_fn = exp_fn;
@@ -4674,7 +4674,7 @@ static int synaptics_rmi4_probe(struct platform_device *pdev)
 	atomic_set(&(rmi4_data->lcm_ibb_power), 0);
 	retval = syna_lcm_bias_power_init(rmi4_data);
 	if (retval) {
-		pr_err("power resource init error!\n");
+		//pr_err("power resource init error!\n");
 		goto err_power_resource_init_fail;
 	}
 
