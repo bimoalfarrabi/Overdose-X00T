@@ -11,7 +11,7 @@
 	make -j$(nproc --all) ARCH=arm64 \
                       CC="$MAIN/dragontc/bin/clang" \
                       CLANG_TRIPLE=aarch64-linux-gnu- \
-                      CROSS_COMPILE="$MAIN/aarch64-linux-gnu/bin/aarch64-linux-gnu-"
+                      CROSS_COMPILE="$MAIN/gcc-arm-8.2-2019.01-x86_64-aarch64-linux-gnu/bin/aarch64-linux-gnu-"
 	rm -rf $KERNELDIR/built
 	mkdir -p $KERNELDIR/built/
 	mv $KERNELDIR/arch/arm64/boot/Image.gz-dtb $KERNELDIR/built/Image.gz-dtb
