@@ -191,7 +191,7 @@ static void devfreq_input_boost(struct work_struct *work)
 		mutex_unlock(&df->lock);
 	}
 
-	queue_delayed_work(b->wq, &b->input_unboost,
+	queue_delayed_work(system_power_efficient_wq, &b->input_unboost,
 		msecs_to_jiffies(CONFIG_DEVFREQ_INPUT_BOOST_DURATION_MS));
 }
 
@@ -225,7 +225,7 @@ static void devfreq_max_boost(struct work_struct *work)
 	boost_jiffies = b->max_boost_jiffies;
 	spin_unlock_irqrestore(&b->lock, flags);
 
-	queue_delayed_work(b->wq, &b->max_unboost, boost_jiffies);
+	queue_delayed_work(system_power_efficient_wq, &b->max_unboost, boost_jiffies);
 }
 
 static void devfreq_max_unboost(struct work_struct *work)
