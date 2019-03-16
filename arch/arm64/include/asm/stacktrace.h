@@ -27,8 +27,17 @@ struct stackframe {
 #endif
 };
 
+#ifdef CONFIG_STACKTRACE
 extern int unwind_frame(struct task_struct *tsk, struct stackframe *frame);
 extern void walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
 			    int (*fn)(struct stackframe *, void *), void *data);
+#else
+static inline int unwind_frame(struct task_struct *tsk, struct stackframe *frame)
+{
+	return 0;
+}
+static inline void walk_stackframe(struct task_struct *tsk, struct stackframe *frame,
+			    int (*fn)(struct stackframe *, void *), void *data) {}
+#endif
 
 #endif	/* __ASM_STACKTRACE_H */
