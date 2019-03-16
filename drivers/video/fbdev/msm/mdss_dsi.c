@@ -37,7 +37,6 @@
 #ifdef CONFIG_MACH_ASUS_X00T
 #include "mdss_panel.h"
 #endif
-#include "mdss_livedisplay.h"
 
 #define CMDLINE_DSI_CTL_NUM_STRING_LEN 2
 
@@ -3191,17 +3190,6 @@ static int mdss_dsi_event_handler(struct mdss_panel_data *pdata,
 		break;
 	case MDSS_EVENT_AVR_MODE:
 		mdss_dsi_avr_config(ctrl_pdata, (int)(unsigned long) arg);
-		break;
-	case MDSS_EVENT_DSI_DYNAMIC_BITCLK:
-		if (ctrl_pdata->panel_data.panel_info.dynamic_bitclk) {
-			rc = mdss_dsi_dynamic_bitclk_config(pdata);
-			if (rc)
-				pr_err("unable to change bitclk error-%d\n",
-					rc);
-		}
-		break;
-	case MDSS_EVENT_UPDATE_LIVEDISPLAY:
-		rc = mdss_livedisplay_update(ctrl_pdata, (int)(unsigned long) arg);
 		break;
 	default:
 		pr_debug("%s: unhandled event=%d\n", __func__, event);
