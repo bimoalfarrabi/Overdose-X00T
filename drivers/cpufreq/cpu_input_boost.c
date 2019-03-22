@@ -28,7 +28,7 @@ module_param(wake_boost_duration, short, 0644);
 #ifdef CONFIG_DYNAMIC_STUNE_BOOST
 static bool stune_boost_active;
 static int boost_slot;
-static __read_mostly unsigned short dynamic_stune_boost;
+static __read_mostly unsigned short dynamic_stune_boost = CONFIG_INPUT_BOOST_STUNE_VALUE;
 module_param(dynamic_stune_boost, short, 0644);
 #endif
 
