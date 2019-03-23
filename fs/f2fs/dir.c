@@ -810,8 +810,7 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
 
 		/* check memory boundary before moving forward */
 		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-		if (unlikely(bit_pos > d->max) ||
-				le16_to_cpu(de->name_len > F2FS_NAME_LEN)) {
+		if (unlikely(bit_pos > d->max)) {
 			f2fs_msg(sbi->sb, KERN_WARNING,
 				"%s: corrupted namelen=%d, run fsck to fix.",
 				__func__, le16_to_cpu(de->name_len));
@@ -857,7 +856,7 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
 	struct f2fs_dentry_block *dentry_blk = NULL;
 	struct page *dentry_page = NULL;
 	struct file_ra_state *ra = &file->f_ra;
-	//loff_t start_pos = ctx->pos;
+	loff_t start_pos = ctx->pos;
 	unsigned int n = ((unsigned long)ctx->pos / NR_DENTRY_IN_BLOCK);
 	struct f2fs_dentry_ptr d;
 	struct fscrypt_str fstr = FSTR_INIT(NULL, 0);
@@ -919,7 +918,7 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
 out_free:
 	fscrypt_fname_free_buffer(&fstr);
 out:
-	//trace_f2fs_readdir(inode, start_pos, ctx->pos, err);
+	trace_f2fs_readdir(inode, start_pos, ctx->pos, err);
 	return err < 0 ? err : 0;
 }
 

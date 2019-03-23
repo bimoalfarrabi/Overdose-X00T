@@ -269,7 +269,7 @@ static int f2fs_set_qf_name(struct super_block *sb, int qtype,
 	if (!qname) {
 		f2fs_msg(sb, KERN_ERR,
 			"Not enough memory for storing quotafile name");
-		return -ENOMEM;
+		return -EINVAL;
 	}
 	if (F2FS_OPTION(sbi).s_qf_names[qtype]) {
 		if (strcmp(F2FS_OPTION(sbi).s_qf_names[qtype], qname) == 0)
@@ -923,11 +923,11 @@ static int f2fs_drop_inode(struct inode *inode)
 			spin_lock(&inode->i_lock);
 			atomic_dec(&inode->i_count);
 		}
-		//trace_f2fs_drop_inode(inode, 0);
+		trace_f2fs_drop_inode(inode, 0);
 		return 0;
 	}
 	ret = generic_drop_inode(inode);
-	//trace_f2fs_drop_inode(inode, ret);
+	trace_f2fs_drop_inode(inode, ret);
 	return ret;
 }
 
@@ -1123,7 +1123,7 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
 		return 0;
 
-	//trace_f2fs_sync_fs(sb, sync);
+	trace_f2fs_sync_fs(sb, sync);
 
 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
 		return -EAGAIN;
@@ -3366,7 +3366,7 @@ skip_recovery:
 	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
 		err = f2fs_disable_checkpoint(sbi);
 		if (err)
-			goto sync_free_meta;
+			goto free_meta;
 	} else if (is_set_ckpt_flags(sbi, CP_DISABLED_FLAG)) {
 		f2fs_enable_checkpoint(sbi);
 	}
@@ -3379,7 +3379,7 @@ skip_recovery:
 		/* After POR, we can run background GC thread.*/
 		err = f2fs_start_gc_thread(sbi);
 		if (err)
-			goto sync_free_meta;
+			goto free_meta;
 	}
 	kvfree(options);
 
@@ -3400,10 +3400,6 @@ skip_recovery:
 	f2fs_update_time(sbi, CP_TIME);
 	f2fs_update_time(sbi, REQ_TIME);
 	return 0;
-
-sync_free_meta:
-	/* safe to flush all the data */
-	sync_filesystem(sbi->sb);
 
 free_meta:
 #ifdef CONFIG_QUOTA
