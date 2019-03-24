@@ -26,16 +26,17 @@ module_param(input_boost_freq_hp, uint, 0644);
 module_param(input_boost_duration, short, 0644);
 module_param(wake_boost_duration, short, 0644);
 
+#ifdef CONFIG_DYNAMIC_STUNE_BOOST
+static bool stune_boost_active;
+static int boost_slot;
+static __read_mostly unsigned short dynamic_stune_boost;
+module_param(dynamic_stune_boost, short, 0644);
+#endif
+
 /* Available bits for boost_drv state */
 #define INPUT_BOOST		BIT(0)
 #define WAKE_BOOST		BIT(1)
 #define MAX_BOOST		BIT(2)
-
-#ifdef CONFIG_DYNAMIC_STUNE_BOOST
-static int dynamic_stune_boost,boost_slot;
-module_param(dynamic_stune_boost, uint, 0644);
-static bool stune_boost_active;
-#endif /* CONFIG_DYNAMIC_STUNE_BOOST */
 
 struct boost_drv {
 	struct workqueue_struct *wq;
