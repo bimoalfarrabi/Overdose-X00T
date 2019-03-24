@@ -40,6 +40,10 @@
 #include <linux/regulator/consumer.h>
 #include <linux/fb.h>
 #include <linux/notifier.h>
+#include <linux/cpu_input_boost.h>
+#include <linux/devfreq_boost.h>
+#include <linux/display_state.h>
+
 #include "../common_X00T/fingerprint_common.h"
 
 typedef struct key_report {
@@ -328,6 +332,12 @@ static void cdfinger_async_report(void)
 static irqreturn_t cdfinger_eint_handler(int irq, void *dev_id)
 {
 	cdfinger_async_report();
+
+	if (!is_display_on()) {
+		cpu_input_boost_kick_wake();
+		devfreq_boost_kick_wake(DEVFREQ_MSM_CPUBW);
+	}
+
 	return IRQ_HANDLED;
 }
 
