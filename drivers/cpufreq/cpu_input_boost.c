@@ -41,6 +41,7 @@ struct boost_drv {
 	atomic_t max_boost_dur;
 	atomic_t state;
 	atomic64_t prev_input_jiffies;
+	bool input_boost_ready;
 };
 
 static struct boost_drv *boost_drv_g __read_mostly;
@@ -169,6 +170,8 @@ static void input_boost_worker(struct work_struct *work)
 		update_online_cpu_policy();
 	}
 
+	b->input_boost_ready = true;
+
 	queue_delayed_work(b->wq, &b->input_unboost,
 		msecs_to_jiffies(input_boost_duration));
 }
@@ -273,7 +276,11 @@ static void cpu_input_boost_input_event(struct input_handle *handle,
 		return;
 
 	atomic64_set(&b->prev_input_jiffies, jiffies);
-	queue_work(b->wq, &b->input_boost);
+
+	if (b->input_boost_ready) {
+		b->input_boost_ready = false;
+		queue_work(b->wq, &b->input_boost);
+	}
 }
 
 static int cpu_input_boost_input_connect(struct input_handler *handler,
@@ -378,6 +385,7 @@ static int __init cpu_input_boost_init(void)
 		pr_err("Failed to register cpufreq notifier, err: %d\n", ret);
 		goto destroy_wq;
 	}
+	b->input_boost_ready = true;
 
 	cpu_input_boost_input_handler.private = b;
 	ret = input_register_handler(&cpu_input_boost_input_handler);
