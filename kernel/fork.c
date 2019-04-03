@@ -636,9 +636,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
 #if defined(CONFIG_TRANSPARENT_HUGEPAGE) && !USE_SPLIT_PMD_PTLOCKS
 	mm->pmd_huge_pte = NULL;
 #endif
-#ifdef CONFIG_ANDROID_SIMPLE_LMK
-	mm->slmk_waitq = NULL;
-#endif
+
 	if (current->mm) {
 		mm->flags = current->mm->flags & MMF_INIT_MASK;
 		mm->def_flags = current->mm->def_flags & VM_INIT_DEF_MASK;
@@ -721,10 +719,6 @@ EXPORT_SYMBOL_GPL(__mmdrop);
 
 static inline void __mmput(struct mm_struct *mm)
 {
-#ifdef CONFIG_ANDROID_SIMPLE_LMK
-	wait_queue_head_t *slmk_waitq = mm->slmk_waitq;
-	atomic_t *slmk_counter = mm->slmk_counter;
-#endif
 	VM_BUG_ON(atomic_read(&mm->mm_users));
 
 	uprobe_clear_state(mm);
@@ -741,12 +735,6 @@ static inline void __mmput(struct mm_struct *mm)
 	if (mm->binfmt)
 		module_put(mm->binfmt->module);
 	mmdrop(mm);
-#ifdef CONFIG_ANDROID_SIMPLE_LMK
-	if (slmk_waitq) {
-		atomic_dec(slmk_counter);
-		wake_up(slmk_waitq);
-	}
-#endif
 }
 
 /*
