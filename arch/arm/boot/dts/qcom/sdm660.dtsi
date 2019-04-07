@@ -51,7 +51,7 @@
 			compatible = "arm,armv8";
 			reg = <0x0 0x0>;
 			enable-method = "psci";
-			clock-frequency = <0x09480048>;
+			clock-frequency = <0x09430043>;
 			qcom,limits-info = <&mitigation_profile0>;
 			qcom,lmh-dcvs = <&lmh_dcvs0>;
 			#cooling-cells = <2>;
@@ -82,7 +82,7 @@
 			compatible = "arm,armv8";
 			reg = <0x0 0x1>;
 			enable-method = "psci";
-			clock-frequency = <0x09480048>;
+			clock-frequency = <0x09430043>;
 			qcom,limits-info = <&mitigation_profile0>;
 			qcom,lmh-dcvs = <&lmh_dcvs0>;
 			#cooling-cells = <2>;
@@ -107,7 +107,7 @@
 			compatible = "arm,armv8";
 			reg = <0x0 0x2>;
 			enable-method = "psci";
-			clock-frequency = <0x09480048>;
+			clock-frequency = <0x09430043>;
 			qcom,limits-info = <&mitigation_profile0>;
 			qcom,lmh-dcvs = <&lmh_dcvs0>;
 			#cooling-cells = <2>;
@@ -132,7 +132,7 @@
 			compatible = "arm,armv8";
 			reg = <0x0 0x3>;
 			enable-method = "psci";
-			clock-frequency = <0x09480048>;
+			clock-frequency = <0x09430043>;
 			qcom,limits-info = <&mitigation_profile0>;
 			qcom,lmh-dcvs = <&lmh_dcvs0>;
 			#cooling-cells = <2>;
@@ -1422,8 +1422,7 @@
 			< 1113600 >,
 			< 1401600 >,
 			< 1536000 >,
-			< 1612800 >,
-			< 1747200 >;
+			< 1612800 >;
 
 		qcom,cpufreq-table-4 =
 			<  633600 >,
