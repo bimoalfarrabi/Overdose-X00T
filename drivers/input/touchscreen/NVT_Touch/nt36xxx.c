@@ -1112,22 +1112,14 @@ void nvt_ts_wakeup_gesture_report(uint8_t gesture_id)
 				keycode = gesture_key_array[4];
 			}
 			break;
-
-		case GESTURE_WORD_M:
-			if(allow_gesture) {
+		/* case GESTURE_WORD_M:
 			NVT_LOG("Gesture : Word-M.\n");
 			keycode = gesture_key_array[5];
-			}
 			break;
-
 		case GESTURE_WORD_O:
-			if(allow_gesture) {
 			NVT_LOG("Gesture : Word-O.\n");
 			keycode = gesture_key_array[6];
-			}
-			break;
-
-
+			break; */
 		case ID_GESTURE_WORD_e:
 			if (screen_gesture) {
 				NVT_LOG("Gesture : Word-e.\n");
@@ -1146,26 +1138,18 @@ void nvt_ts_wakeup_gesture_report(uint8_t gesture_id)
 				keycode = gesture_key_array[9];
 			}
 			break;
-
-		 case GESTURE_SLIDE_DOWN:
-			if(allow_gesture) {
+		/* case GESTURE_SLIDE_DOWN:
 			NVT_LOG("Gesture : Slide DOWN.\n");
 			keycode = gesture_key_array[10];
-			}
 			break;
 		case GESTURE_SLIDE_LEFT:
-			if(allow_gesture) {
 			NVT_LOG("Gesture : Slide LEFT.\n");
 			keycode = gesture_key_array[11];
-			}
 			break;
 		case GESTURE_SLIDE_RIGHT:
-			if(allow_gesture) {
 			NVT_LOG("Gesture : Slide RIGHT.\n");
 			keycode = gesture_key_array[12];
-			}
-			break;
-
+			break; */
 		default:
 			NVT_LOG("Still in gesture mode.\n");
 			break;
