@@ -61,6 +61,7 @@ MODULE_ALIAS("rcupdate");
 #define MODULE_PARAM_PREFIX "rcupdate."
 
 module_param(rcu_expedited, int, 0);
+static int rcu_normal;
 module_param(rcu_normal, int, 0);
 
 static int rcu_normal_after_boot;
