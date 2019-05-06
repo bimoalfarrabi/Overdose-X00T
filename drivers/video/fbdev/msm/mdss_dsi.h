@@ -612,7 +612,6 @@ struct mdss_dsi_ctrl_pdata {
 	struct delayed_work err_int_work;
 	bool rdy_err_detect;
 	bool err_detect_irq_en;
->>>>>>> 80e6596d5082... msm: mdss: Reduce display commit latency caused by deep CPU idle
 };
 
 struct dsi_status_data {
