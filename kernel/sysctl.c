@@ -303,6 +303,7 @@ static struct ctl_table kern_table[] = {
 	},
 #endif
 #ifdef CONFIG_SCHED_DEBUG
+#if 0
 	{
 		.procname	= "sched_child_runs_first",
 		.data		= &sysctl_sched_child_runs_first,
@@ -310,6 +311,7 @@ static struct ctl_table kern_table[] = {
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec,
 	},	
+#endif
 	{
 		.procname	= "sched_cpu_schedtune_bias",
 		.data		= &sysctl_sched_cpu_schedtune_bias,
