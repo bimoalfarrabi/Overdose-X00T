@@ -26,7 +26,8 @@ unsigned long boosted_cpu_util(int cpu);
 #define cpufreq_driver_fast_switch(x, y) 0
 #define cpufreq_enable_fast_switch(x)
 #define cpufreq_disable_fast_switch(x)
-#define LATENCY_MULTIPLIER			(1000)
+#define UP_RATE_LIMIT_US			(1000)
+#define DOWN_RATE_LIMIT_US			(1000)
 #define PWRGOV_KTHREAD_PRIORITY	25
 
 struct pwrgov_tunables {
@@ -137,6 +138,9 @@ static void pwrgov_update_commit(struct pwrgov_policy *sg_policy, u64 time,
     if (sg_policy->next_freq == next_freq)
 	return;
 
+    if (sg_policy->next_freq > next_freq)
+	next_freq = (sg_policy->next_freq + next_freq) >> 1;
+
     sg_policy->next_freq = next_freq;
     sg_policy->last_freq_update_time = time;
 
@@ -216,7 +220,7 @@ static void pwrgov_get_util(unsigned long *util, unsigned long *max, u64 time)
     rt = (rt * max_cap) >> SCHED_CAPACITY_SHIFT;
 
     *util = boosted_cpu_util(cpu);
-    if (likely(use_pelt()))
+    if (use_pelt())
 	*util = min((*util + rt), max_cap);
 
     *max = max_cap;
@@ -652,8 +656,8 @@ static void get_tunables_data(struct pwrgov_tunables *tunables,
     }
 
 initialize:
-    tunables->up_rate_limit_us = LATENCY_MULTIPLIER;
-    tunables->down_rate_limit_us = LATENCY_MULTIPLIER;
+    tunables->up_rate_limit_us = UP_RATE_LIMIT_US;
+    tunables->down_rate_limit_us = DOWN_RATE_LIMIT_US;
     lat = policy->cpuinfo.transition_latency / NSEC_PER_USEC;
     if (lat) {
 	tunables->up_rate_limit_us *= lat;
@@ -729,9 +733,9 @@ fail:
 stop_kthread:
     pwrgov_kthread_stop(sg_policy);
 
-free_sg_policy:
     mutex_unlock(&global_tunables_lock);
 
+free_sg_policy:
     pwrgov_policy_free(sg_policy);
 
 disable_fast_switch:
