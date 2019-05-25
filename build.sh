@@ -1,6 +1,6 @@
     #!/bin/bash
     clear
-    echo ThunderCloud Kernel Compile Tool
+    echo Overdose Kernel Compile Tool
 	echo By MrDarkness
 	echo Please Sit Back And Chill...
 	export MAIN=`readlink -f ../`
