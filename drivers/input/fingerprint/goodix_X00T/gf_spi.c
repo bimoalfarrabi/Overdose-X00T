@@ -41,9 +41,6 @@
 #include <linux/pm_qos.h>
 #include <linux/cpufreq.h>
 #include <linux/wakelock.h>
-#include <linux/cpu_input_boost.h>
-#include <linux/devfreq_boost.h>
-#include <linux/display_state.h>
 #include "gf_spi.h"
 
 #include "../common_X00T/fingerprint_common.h"
