@@ -9,7 +9,7 @@
 	mkdir -p $KERNELDIR/built/
 	make ARCH=arm64 X00T_defconfig
 	make -j$(nproc --all) ARCH=arm64 \
-                      CC="$MAIN/aosp-clang/bin/clang" \
+                      CC="$MAIN/clang/bin/clang" \
                       CLANG_TRIPLE=aarch64-linux-gnu- \
                       CROSS_COMPILE="$MAIN/aarch64-linux-gnu/bin/aarch64-linux-gnu-"
 	rm -rf $KERNELDIR/built
