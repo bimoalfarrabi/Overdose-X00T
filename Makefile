@@ -305,8 +305,8 @@ O3_OPTS := -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-lo
 O3_OPTS2 := -finline-functions -fgraphite-identity -floop-interchange -floop-strip-mine -ftree-loop-if-convert -floop-block -floop-interchange
 HOSTCC       = ccache gcc
 HOSTCXX      = g++
-HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 $(O3_OPTS) $(O3_OPTS2) -fomit-frame-pointer -std=gnu89
-HOSTCXXFLAGS = -O2 $(O3_OPTS) $(O3_OPTS2)
+HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast $(O3_OPTS) $(O3_OPTS2) -fomit-frame-pointer -std=gnu89
+HOSTCXXFLAGS = -Ofast $(O3_OPTS) $(O3_OPTS2)
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
