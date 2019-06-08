@@ -189,6 +189,9 @@ static void input_boost_worker(struct work_struct *work)
 	ret = do_stune_boost("top-app", dynamic_stune_boost, &boost_slot);
 	if (!ret)
 		stune_boost_active = true;
+
+		do_prefer_idle("top-app", 1);
+		do_prefer_idle("foreground", 1);
 #endif /* CONFIG_DYNAMIC_STUNE_BOOST */
 
 	queue_delayed_work(b->wq, &b->input_unboost,
@@ -207,6 +210,9 @@ static void input_unboost_worker(struct work_struct *work)
 	if (stune_boost_active) {
 		reset_stune_boost("top-app", boost_slot);
 		stune_boost_active = false;
+
+		do_prefer_idle("top-app", 0);
+		do_prefer_idle("foreground", 0);
 	}
 #endif /* CONFIG_DYNAMIC_STUNE_BOOST */
 
@@ -339,6 +345,9 @@ static void cpu_input_boost_input_disconnect(struct input_handle *handle)
 	if (stune_boost_active) {
 		reset_stune_boost("top-app", boost_slot);
 		stune_boost_active = false;
+
+		do_prefer_idle("top-app", 0);
+		do_prefer_idle("foreground", 0);
 	}
 #endif /* CONFIG_DYNAMIC_STUNE_BOOST */
 
