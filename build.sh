@@ -7,7 +7,7 @@
 	export KERNELDIR=`readlink -f .`
 	rm -rf $KERNELDIR/built
 	mkdir -p $KERNELDIR/built/
-	export CROSS_COMPILE=$MAIN/aarch64-linux-android-4.9/bin/aarch64-linux-android-   
+	export CROSS_COMPILE=$MAIN/aarch64-linux-gnu/bin/aarch64-linux-gnu-   
 	export ARCH=arm64
 	make X00T_defconfig
 	make -j$(nproc --all) | tee $KERNELDIR/built/kernel_output.txt
