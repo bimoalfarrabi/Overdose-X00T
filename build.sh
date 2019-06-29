@@ -5,8 +5,8 @@
 	echo Please Sit Back And Chill...
 	export MAIN=`readlink -f ../`
 	export KERNELDIR=`readlink -f .`
-	rm -rf $KERNELDIR/built
-	mkdir -p $KERNELDIR/built/
+	rm $KERNELDIR/built/Image.gz-dtb
+	rm $KERNELDIR/built/kernel_output.txt
 	export CROSS_COMPILE=$MAIN/aarch64-linux-gnu/bin/aarch64-linux-gnu-   
 	export ARCH=arm64
 	make X00T_defconfig
@@ -14,4 +14,9 @@
 	mv $KERNELDIR/arch/arm64/boot/Image.gz-dtb $KERNELDIR/built/Image.gz-dtb
 	echo ""
 	echo "Compile Done"
+	echo ""
+	cd $KERNELDIR/built
+	zip -r Overdose-XV-Beta-X00T-`date +%Y%m%d_%H%M`.zip * -x "kernel_output.txt" "*.zip"
+	cd $KERNELDIR/
+	echo "Zip Done"
 
