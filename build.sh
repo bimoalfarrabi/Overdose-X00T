@@ -7,10 +7,11 @@
 	export KERNELDIR=`readlink -f .`
 	rm $KERNELDIR/built/Image.gz-dtb
 	rm $KERNELDIR/built/kernel_output.txt
-	export CROSS_COMPILE=$MAIN/aarch64-linux-gnu/bin/aarch64-linux-gnu-   
-	export ARCH=arm64
-	make X00T_defconfig
-	make -j$(nproc --all) | tee $KERNELDIR/built/kernel_output.txt
+	make ARCH=arm64 X00T_defconfig
+	make -j$(nproc --all) ARCH=arm64 \
+                      CC="$MAIN/aosp-clang/bin/clang" \
+                      CLANG_TRIPLE=aarch64-linux-gnu- \
+                      CROSS_COMPILE="$MAIN/aarch64-linux-gnu/bin/aarch64-linux-gnu-" | tee $KERNELDIR/built/kernel_output.txt
 	mv $KERNELDIR/arch/arm64/boot/Image.gz-dtb $KERNELDIR/built/Image.gz-dtb
 	echo ""
 	echo "Compile Done"
