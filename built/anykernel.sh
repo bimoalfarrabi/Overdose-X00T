@@ -85,14 +85,6 @@ cp -rpf $patch/init.qcom.post_boot.sh /vendor/bin/init.qcom.post_boot.sh;
 chmod -R 755 /vendor/bin/init.qcom.post_boot.sh;
 chmod -R 755 /vendor/bin/init.qcom.post_boot.sh.bkp;
 
-if [ ! -f /vendor/etc/thermal-engine.conf.bkp ]; then
-	cp -rpf /vendor/etc/thermal-engine.conf /vendor/etc/thermal-engine.conf.bkp;
-fi
-
-cp -rpf $patch/thermal-engine.conf /vendor/etc/thermal-engine.conf;
-
-chmod 0777 /vendor/etc/thermal-engine.conf;
-
 # end ramdisk changes
 
 write_boot;
