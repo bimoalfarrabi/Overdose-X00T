@@ -74,16 +74,16 @@ insert_line init.rc "import /init.overdose.rc" after "import /init.usb.configfs.
 
 # end ramdisk changes
 
-# backup post-boot script
-if [ ! -f /vendor/bin/init.qcom.post_boot.sh.bkp ]; then
-	cp -rpf /vendor/bin/init.qcom.post_boot.sh /vendor/bin/init.qcom.post_boot.sh.bkp;
-fi
+## backup post-boot script
+#if [ ! -f /vendor/bin/init.qcom.post_boot.sh.bkp ]; then
+#	cp -rpf /vendor/bin/init.qcom.post_boot.sh /vendor/bin/#init.qcom.post_boot.sh.bkp;
+#fi
 
 # replace post-boot script
-cp -rpf $patch/init.qcom.post_boot.sh /vendor/bin/init.qcom.post_boot.sh;
+#cp -rpf $patch/init.qcom.post_boot.sh /vendor/bin/init.qcom.post_boot.sh;
 
-chmod -R 755 /vendor/bin/init.qcom.post_boot.sh;
-chmod -R 755 /vendor/bin/init.qcom.post_boot.sh.bkp;
+#chmod -R 755 /vendor/bin/init.qcom.post_boot.sh;
+#chmod -R 755 /vendor/bin/init.qcom.post_boot.sh.bkp;
 
 # end ramdisk changes
 
