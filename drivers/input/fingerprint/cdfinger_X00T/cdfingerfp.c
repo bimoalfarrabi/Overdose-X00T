@@ -134,7 +134,7 @@ struct cdfingerfp_data {
 	struct wake_lock cdfinger_lock;
 	struct input_dev* cdfinger_input;
 	struct notifier_block notifier;
-	struct mutex buf_lock;
+	struct rt_mutex buf_lock;
 	int irq_enable_status;
 }*g_cdfingerfp_data;
 
@@ -528,7 +528,7 @@ static long cdfinger_ioctl(struct file* filp, unsigned int cmd, unsigned long ar
 {
 	int err = 0;
 	struct cdfingerfp_data *cdfinger = filp->private_data;
-	mutex_lock(&cdfinger->buf_lock);
+	rt_mutex_lock(&cdfinger->buf_lock);
 	switch (cmd) {
 		case CDFINGER_INIT_GPIO:
 			err = cdfinger_init_gpio(cdfinger);
@@ -573,7 +573,7 @@ static long cdfinger_ioctl(struct file* filp, unsigned int cmd, unsigned long ar
 		default:
 			break;	
 	}
-	mutex_unlock(&cdfinger->buf_lock);
+	rt_mutex_unlock(&cdfinger->buf_lock);
 	return err;
 }
 /* Huaqin modify for TT1240582 by puqirui at 2018/09/21 end */
@@ -607,11 +607,11 @@ static int cdfinger_fb_notifier_callback(struct notifier_block* self,
     blank = *(int*)evdata->data;
     switch (blank) {
         case FB_BLANK_UNBLANK:
-		mutex_lock(&g_cdfingerfp_data->buf_lock);
+		rt_mutex_lock(&g_cdfingerfp_data->buf_lock);
 		screen_status = 1;
 		if (isInKeyMode == 0)
 			cdfinger_async_report();
-		mutex_unlock(&g_cdfingerfp_data->buf_lock);
+		rt_mutex_unlock(&g_cdfingerfp_data->buf_lock);
 #if 0
 /* Huaqin modify for cpu_boost by leiyu at 2018/04/25 start */
 		sched_set_boost(0);
@@ -619,11 +619,11 @@ static int cdfinger_fb_notifier_callback(struct notifier_block* self,
 #endif
             break;
         case FB_BLANK_POWERDOWN:
-		mutex_lock(&g_cdfingerfp_data->buf_lock);
+		rt_mutex_lock(&g_cdfingerfp_data->buf_lock);
 		screen_status = 0;
 		if (isInKeyMode == 0)
 			cdfinger_async_report();
-		mutex_unlock(&g_cdfingerfp_data->buf_lock);
+		rt_mutex_unlock(&g_cdfingerfp_data->buf_lock);
             break;
         default:
             break;
@@ -655,7 +655,7 @@ static int cdfinger_probe(struct platform_device *pdev)
 	cdfingerdev = kzalloc(sizeof(struct cdfingerfp_data),GFP_KERNEL);
 	cdfingerdev->miscdev = &st_cdfinger_dev;
 	cdfingerdev->cdfinger_dev = pdev;
-	mutex_init(&cdfingerdev->buf_lock);
+	rt_mutex_init(&cdfingerdev->buf_lock);
 	wake_lock_init(&cdfingerdev->cdfinger_lock, WAKE_LOCK_SUSPEND, "cdfinger wakelock");
 	status=cdfinger_parse_dts(&cdfingerdev->cdfinger_dev->dev, cdfingerdev);
 	if (status != 0) {
