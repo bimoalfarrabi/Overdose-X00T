@@ -447,6 +447,8 @@ int smblib_set_charge_param(struct smb_charger *chg,
 		return rc;
 	}
 
+	pr_info("[bat] smblib_set_charge_param :: val_ua =%d",val_u);	
+
 	smblib_dbg(chg, PR_REGISTER, "%s = %d (0x%02x)\n",
 		   param->name, val_u, val_raw);
 
@@ -2106,6 +2108,9 @@ int smblib_rerun_aicl(struct smb_charger *chg)
 	smblib_dbg(chg, PR_MISC, "re-running AICL\n");
 	rc = smblib_get_charge_param(chg, &chg->param.icl_stat,
 			&settled_icl_ua);
+
+	pr_info("[bat] smblib_rerun_aicl: settled_icl_ua = %d",settled_icl_ua);
+
 	if (rc < 0) {
 		smblib_err(chg, "Couldn't get settled ICL rc=%d\n", rc);
 		return rc;
@@ -2207,6 +2212,7 @@ int smblib_dp_dm(struct smb_charger *chg, int val)
 		chg->usb_icl_delta_ua += 100000;
 		vote(chg->usb_icl_votable, SW_QC3_VOTER, true,
 						target_icl_ua - 100000);
+		pr_info("[bat] ICL DOWN ICL =%d :: Delta_ua =%d", target_icl_ua, chg->usb_icl_delta_ua);
 		smblib_dbg(chg, PR_PARALLEL, "ICL DOWN ICL=%d reduction=%d\n",
 				target_icl_ua, chg->usb_icl_delta_ua);
 		break;
@@ -2237,6 +2243,8 @@ int smblib_disable_hw_jeita(struct smb_charger *chg, bool disable)
 {
 	int rc;
 	u8 mask;
+
+	pr_info("[bat] Enter hw_jeita\n");
 
 	/*
 	 * Disable h/w base JEITA compensation if s/w JEITA is enabled
@@ -4090,8 +4098,8 @@ void asus_insertion_initial_settings(struct smb_charger *chg)
 			"Couldn't set default PRE_CHARGE_CURRENT_CFG_REG rc=%d\n",
 			rc);
 
-	/* reg=1061, 0x38, 1475mA, gaiwei, 0x28, 1000mA */
-	rc = smblib_write(chg, FAST_CHARGE_CURRENT_CFG_REG, 0x28);
+	/* reg=1061, 0x38, 1475mA, gaiwei, 0x28, 3000mA */
+	rc = smblib_write(chg, FAST_CHARGE_CURRENT_CFG_REG, 0x78);
 	if (rc < 0)
 		dev_err(chg->dev,
 			"Couldn't set default FAST_CHARGE_CURRENT_CFG_REG rc=%d\n",
@@ -5840,6 +5848,7 @@ static void smblib_icl_change_work(struct work_struct *work)
 	int rc, settled_ua;
 
 	rc = smblib_get_charge_param(chg, &chg->param.icl_stat, &settled_ua);
+	pr_info("[bat] smblib_icl_change_work :: settled_ua = %d",settled_ua);
 	if (rc < 0) {
 		smblib_err(chg, "Couldn't get ICL status rc=%d\n", rc);
 		return;
@@ -6140,9 +6149,8 @@ int smblib_init(struct smb_charger *chg)
 			return rc;
 		}
 
-		/*rc = qcom_step_chg_init(chg->step_chg_enabled,
+		rc = qcom_step_chg_init(chg->step_chg_enabled,
 						chg->sw_jeita_enabled);
-                */
 
 		if (rc < 0) {
 			smblib_err(chg, "Couldn't init qcom_step_chg_init rc=%d\n",

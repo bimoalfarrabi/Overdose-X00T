@@ -4879,7 +4879,7 @@ static int fg_parse_ki_coefficients(struct fg_chip *chip)
 #define DEFAULT_BATT_TEMP_HOT		50
 #define DEFAULT_CL_START_SOC		15
 #define DEFAULT_CL_MIN_TEMP_DECIDEGC	150
-#define DEFAULT_CL_MAX_TEMP_DECIDEGC	450
+#define DEFAULT_CL_MAX_TEMP_DECIDEGC	650
 #define DEFAULT_CL_MAX_INC_DECIPERC	5
 #define DEFAULT_CL_MAX_DEC_DECIPERC	100
 #define DEFAULT_CL_MIN_LIM_DECIPERC	0
@@ -5081,8 +5081,8 @@ static int fg_parse_dt(struct fg_chip *chip)
 			pr_warn("Error reading Jeita thresholds, default values will be used rc:%d\n",
 				rc);
 	}
-	chip->dt.jeita_thresholds[JEITA_WARM] = 97;
-	chip->dt.jeita_thresholds[JEITA_HOT] = 97;
+	chip->dt.jeita_thresholds[JEITA_WARM] = 65;
+	chip->dt.jeita_thresholds[JEITA_HOT] = 95;
 
 	if (of_property_count_elems_of_size(node,
 		"qcom,battery-thermal-coefficients",
@@ -5136,12 +5136,13 @@ static int fg_parse_dt(struct fg_chip *chip)
 	else
 		chip->dt.cl_min_temp = temp;
 
-	rc = of_property_read_u32(node, "qcom,cl-max-temp", &temp);
+/*	rc = of_property_read_u32(node, "qcom,cl-max-temp", &temp);
 	if (rc < 0)
-		chip->dt.cl_max_temp = DEFAULT_CL_MAX_TEMP_DECIDEGC;
-	else
+*/
+		chip->dt.cl_max_temp = DEFAULT_CL_MAX_TEMP_DECIDEGC; // i.e 65 Deg
+/*	else
 		chip->dt.cl_max_temp = temp;
-
+*/
 	rc = of_property_read_u32(node, "qcom,cl-max-increment", &temp);
 	if (rc < 0)
 		chip->dt.cl_max_cap_inc = DEFAULT_CL_MAX_INC_DECIPERC;
