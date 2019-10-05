@@ -95,9 +95,6 @@ char *health_type[] = {
 
 static void asus_smblib_rerun_aicl(struct smb_charger *chg)
 {
-	
-	pr_info("[bat] asus_smblib_rerun_aicl\n");
-
 	/* reg=1380, bit2=0, USBIN_AICL_EN=disable */
 	smblib_masked_write(chg, USBIN_AICL_OPTIONS_CFG_REG,
 				USBIN_AICL_EN_BIT, 0);
@@ -216,8 +213,6 @@ static int smblib_get_jeita_cc_delta(struct smb_charger *chg, int *cc_delta_ua)
 int smblib_icl_override(struct smb_charger *chg, bool override)
 {
 	int rc;
-
-	pr_info("[bat] Enter smblib_icl_override\n");
 
 	rc = smblib_masked_write(chg, USBIN_LOAD_CFG_REG,
 				ICL_OVERRIDE_AFTER_APSD_BIT,
@@ -451,8 +446,6 @@ int smblib_set_charge_param(struct smb_charger *chg,
 			param->name, val_raw, param->reg, rc);
 		return rc;
 	}
-
-	pr_info("[bat] smblib_set_charge_param :: val_ua =%d",val_u);	
 
 	smblib_dbg(chg, PR_REGISTER, "%s = %d (0x%02x)\n",
 		   param->name, val_u, val_raw);
@@ -2113,9 +2106,6 @@ int smblib_rerun_aicl(struct smb_charger *chg)
 	smblib_dbg(chg, PR_MISC, "re-running AICL\n");
 	rc = smblib_get_charge_param(chg, &chg->param.icl_stat,
 			&settled_icl_ua);
-
-	pr_info("[bat] smblib_rerun_aicl: settled_icl_ua = %d",settled_icl_ua);
-
 	if (rc < 0) {
 		smblib_err(chg, "Couldn't get settled ICL rc=%d\n", rc);
 		return rc;
@@ -2247,8 +2237,6 @@ int smblib_disable_hw_jeita(struct smb_charger *chg, bool disable)
 {
 	int rc;
 	u8 mask;
-
-	pr_info("[bat] Enter hw_jeita\n");
 
 	/*
 	 * Disable h/w base JEITA compensation if s/w JEITA is enabled
@@ -3234,7 +3222,7 @@ int smblib_get_charge_current(struct smb_charger *chg,
 	/* get settled ICL */
 	rc = smblib_get_prop_input_current_settled(chg, &val);
 	if (rc < 0) {
-		smblib_err(chg, "[bat] smblib_charge_current / Couldn't get settled ICL rc=%d\n", rc);
+		smblib_err(chg, "Couldn't get settled ICL rc=%d\n", rc);
 		return rc;
 	}
 
@@ -4102,8 +4090,8 @@ void asus_insertion_initial_settings(struct smb_charger *chg)
 			"Couldn't set default PRE_CHARGE_CURRENT_CFG_REG rc=%d\n",
 			rc);
 
-	/* reg=1061, 0x38, 1475mA, gaiwei, 0x28, 3000mA */
-	rc = smblib_write(chg, FAST_CHARGE_CURRENT_CFG_REG, 0x78);
+	/* reg=1061, 0x38, 1475mA, gaiwei, 0x28, 1000mA */
+	rc = smblib_write(chg, FAST_CHARGE_CURRENT_CFG_REG, 0x28);
 	if (rc < 0)
 		dev_err(chg->dev,
 			"Couldn't set default FAST_CHARGE_CURRENT_CFG_REG rc=%d\n",
@@ -4289,9 +4277,6 @@ irqreturn_t smblib_handle_batt_temp_changed(int irq, void *data)
 	struct smb_irq_data *irq_data = data;
 	struct smb_charger *chg = irq_data->parent_data;
 	int rc;
-
-	pr_info("[bat] Entered handle_batt_temp_changed\n");	
-
 
 	rc = smblib_recover_from_soft_jeita(chg);
 	if (rc < 0) {
@@ -4497,13 +4482,10 @@ irqreturn_t smblib_handle_icl_change(int irq, void *data)
 
 		rc = smblib_get_charge_param(chg, &chg->param.icl_stat,
 				&settled_ua);
-
 		if (rc < 0) {
 			smblib_err(chg, "Couldn't get ICL status rc=%d\n", rc);
 			return IRQ_HANDLED;
 		}
-
-		pr_info("[bat] irq_smblib_handle_icl_change (FORCE) :: settled_ua = %d",settled_ua);
 
 		/* If AICL settled then schedule work now */
 		if ((settled_ua == get_effective_result(chg->usb_icl_votable))
@@ -5466,9 +5448,6 @@ irqreturn_t smblib_handle_switcher_power_ok(int irq, void *data)
 		/* This could be a weak charger reduce ICL */
 		if (!is_client_vote_enabled(chg->usb_icl_votable,
 						WEAK_CHARGER_VOTER)) {
-
-		pr_info("[bat] smblib_handle_switcher_power_ok :: Weak Charger\n");
-
 			smblib_err(chg,
 				"Weak charger detected: voting %dmA ICL\n",
 				*chg->weak_chg_icl_ua / 1000);
@@ -5861,9 +5840,6 @@ static void smblib_icl_change_work(struct work_struct *work)
 	int rc, settled_ua;
 
 	rc = smblib_get_charge_param(chg, &chg->param.icl_stat, &settled_ua);
-
-	pr_info("[bat] smblib_icl_change_work :: settled_ua = %d",settled_ua);
-
 	if (rc < 0) {
 		smblib_err(chg, "Couldn't get ICL status rc=%d\n", rc);
 		return;
@@ -6164,8 +6140,9 @@ int smblib_init(struct smb_charger *chg)
 			return rc;
 		}
 
-		rc = qcom_step_chg_init(chg->step_chg_enabled,
+		/*rc = qcom_step_chg_init(chg->step_chg_enabled,
 						chg->sw_jeita_enabled);
+                */
 
 		if (rc < 0) {
 			smblib_err(chg, "Couldn't init qcom_step_chg_init rc=%d\n",

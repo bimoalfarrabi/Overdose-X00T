@@ -57,16 +57,16 @@ static struct smb_params v1_params = {
 	.usb_icl		= {
 		.name	= "usb input current limit",
 		.reg	= USBIN_CURRENT_LIMIT_CFG_REG,
-		.min_u	= 3000000,
+		.min_u	= 0,
 		.max_u	= 4800000,
-		.step_u	= 0,
+		.step_u	= 25000,
 	},
 	.icl_stat		= {
 		.name	= "input current limit status",
 		.reg	= ICL_STATUS_REG,
-		.min_u	= 3000000,
+		.min_u	= 0,
 		.max_u	= 4800000,
-		.step_u	= 0,
+		.step_u	= 25000,
 	},
 	.otg_cl			= {
 		.name	= "usb otg current limit",
@@ -78,9 +78,9 @@ static struct smb_params v1_params = {
 	.dc_icl			= {
 		.name	= "dc input current limit",
 		.reg	= DCIN_CURRENT_LIMIT_CFG_REG,
-		.min_u	= 3000000,
+		.min_u	= 0,
 		.max_u	= 6000000,
-		.step_u	= 0,
+		.step_u	= 25000,
 	},
 	.dc_icl_pt_lv		= {
 		.name	= "dc icl PT <8V",
@@ -127,9 +127,9 @@ static struct smb_params v1_params = {
 	.jeita_cc_comp		= {
 		.name	= "jeita fcc reduction",
 		.reg	= JEITA_CCCOMP_CFG_REG,
-		.min_u	= 3000000,
+		.min_u	= 0,
 		.max_u	= 1575000,
-		.step_u	= 0,
+		.step_u	= 25000,
 	},
 	.freq_buck		= {
 		.name	= "buck switching frequency",
@@ -1159,11 +1159,12 @@ static int smb2_batt_set_prop(struct power_supply *psy,
 		chg->step_chg_enabled = !!val->intval;
 		break;
 	case POWER_SUPPLY_PROP_SW_JEITA_ENABLED:
-		if (chg->sw_jeita_enabled != (!!val->intval)) {
+		//if (chg->sw_jeita_enabled != (!!val->intval)) {
+
 			rc = smblib_disable_hw_jeita(chg, !!val->intval);
-			if (rc == 0)
+			/*if (rc == 0)
 				chg->sw_jeita_enabled = !!val->intval;
-		}
+		}*/
 		break;
 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX:
 		chg->batt_profile_fcc_ua = val->intval;
@@ -1191,6 +1192,7 @@ static int smb2_batt_set_prop(struct power_supply *psy,
 		rc = -EINVAL;
 	}
 
+rc = smblib_disable_hw_jeita(chg, !!val->intval);
 	return rc;
 }
 
@@ -1811,13 +1813,8 @@ static int smb2_init_hw(struct smb2 *chip)
 		}
 	}
 
-	if (chg->sw_jeita_enabled) {
 		rc = smblib_disable_hw_jeita(chg, true);
-		if (rc < 0) {
-			dev_err(chg->dev, "Couldn't set hw jeita rc=%d\n", rc);
-			return rc;
-		}
-	}			
+			
 
 	return rc;
 }

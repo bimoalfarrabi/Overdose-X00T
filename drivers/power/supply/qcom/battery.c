@@ -880,21 +880,21 @@ static int usb_icl_vote_callback(struct votable *votable, void *data,
 		pr_err("Couldn't get aicl settled value rc=%d\n", rc);
 		return rc;
 	}
-/*
-	/* rerun AICL if new ICL is above settled ICL 
+
+	/* rerun AICL if new ICL is above settled ICL */
 	if (icl_ua > pval.intval)
 		rerun_aicl = true;
 
 	if (rerun_aicl) {
-		/* set a lower ICL 
+		/* set a lower ICL */
 		pval.intval = max(pval.intval - ICL_STEP_UA, ICL_STEP_UA);
 		power_supply_set_property(chip->main_psy,
 				POWER_SUPPLY_PROP_CURRENT_MAX,
 				&pval);
 	}
-*/
+
 	/* set the effective ICL */
-	pval.intval = icl_ua = 3000000;
+	pval.intval = icl_ua;
 	power_supply_set_property(chip->main_psy,
 			POWER_SUPPLY_PROP_CURRENT_MAX,
 			&pval);
