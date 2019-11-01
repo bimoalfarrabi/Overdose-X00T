@@ -20,7 +20,7 @@ extern "C" {
 #include "NXP_I2C.h"
 #endif
 
-#define TFA98XX_API_REV_STR "v6.6.2"
+#define TFA98XX_API_REV_STR "v6.6.3"
 
 #include "tfa_device.h"
 
