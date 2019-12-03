@@ -47,7 +47,6 @@
 //Huaqin add for Reduce the bright screen time by qimaokang at 2018/4/20 start
 #include <linux/kthread.h>
 //Huaqin add for Reduce the bright screen time by qimaokang at 2018/4/20 end
-#include <linux/sched/rt.h>
 
 #if defined(CONFIG_FB)
 #include <linux/notifier.h>
@@ -211,9 +210,7 @@ extern int32_t nvt_mp_proc_init(void);
 
 struct nvt_ts_data *ts;
 
-static struct kthread_work work;
-static struct kthread_worker touch_worker;
-static struct task_struct *touch_worker_thread;
+static struct workqueue_struct *nvt_wq;
 
 #if BOOT_UPDATE_FIRMWARE
 static struct workqueue_struct *nvt_fwu_wq;
@@ -1300,7 +1297,7 @@ Description:
 return:
 	n.a.
 *******************************************************/
-static void nvt_ts_work_func(struct kthread_work *work)
+static void nvt_ts_work_func(struct work_struct *work)
 {
 	int32_t ret = -1;
 	uint8_t point_data[POINT_DATA_LEN + 1] = {0};
@@ -1478,7 +1475,7 @@ static irqreturn_t nvt_ts_irq_handler(int32_t irq, void *dev_id)
 	}
 #endif
 
-	queue_kthread_work(&touch_worker, &work);
+	queue_work(nvt_wq, &ts->nvt_work);
 
 	return IRQ_HANDLED;
 }
@@ -1573,7 +1570,6 @@ static int32_t nvt_ts_probe(struct i2c_client *client, const struct i2c_device_i
 #if ((TOUCH_KEY_NUM > 0) || WAKEUP_GESTURE)
 	int32_t retry = 0;
 #endif
-	struct sched_param param = { .sched_priority = MAX_RT_PRIO - 1 };
 
 	NVT_LOG("start\n");
 
@@ -1640,19 +1636,16 @@ static int32_t nvt_ts_probe(struct i2c_client *client, const struct i2c_device_i
 	mutex_unlock(&ts->lock);
 
 	//---create workqueue---
-	init_kthread_worker(&touch_worker);
-	touch_worker_thread = kthread_create(kthread_worker_fn,&touch_worker,"touch_worker_thread");
-	if (IS_ERR(touch_worker_thread)) {
-		pr_err("%s: Cannot set touch_worker_thread", __func__);
-		return -EFAULT;
+	nvt_wq = create_workqueue("nvt_wq");
+	if (!nvt_wq) {
+		NVT_ERR("nvt_wq create workqueue failed\n");
+		ret = -ENOMEM;
+		goto err_create_nvt_wq_failed;
 	}
-	sched_setscheduler(touch_worker_thread, SCHED_FIFO, &param);
+	INIT_WORK(&ts->nvt_work, nvt_ts_work_func);
 
-	wake_up_process(touch_worker_thread);
 
 	//---allocate input device---
-	init_kthread_work(&work, nvt_ts_work_func);
-
 	ts->input_dev = input_allocate_device();
 	if (ts->input_dev == NULL) {
 		NVT_ERR("allocate input device failed\n");
@@ -1849,6 +1842,7 @@ err_int_request_failed:
 err_input_register_device_failed:
 	input_free_device(ts->input_dev);
 err_input_dev_alloc_failed:
+err_create_nvt_wq_failed:
 	mutex_destroy(&ts->lock);
 err_chipvertrim_failed:
 err_check_functionality_failed:
@@ -2195,6 +2189,9 @@ static void __exit nvt_driver_exit(void)
 {
 	i2c_del_driver(&nvt_i2c_driver);
 	destroy_gesture();
+
+	if (nvt_wq)
+		destroy_workqueue(nvt_wq);
 
 #if BOOT_UPDATE_FIRMWARE
 	if (nvt_fwu_wq)
