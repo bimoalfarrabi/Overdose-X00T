@@ -4,7 +4,7 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=Overdose XX - Adapt & Improve
+kernel.string=Overdose XXI - Adapt & Improve
 do.devicecheck=1
 do.modules=0
 do.systemless=1
