@@ -135,8 +135,11 @@ static void asus_smblib_rerun_aicl(struct smb_charger *chg)
 			USBIN_AICL_EN_BIT, 0);
 	/* Add a delay so that AICL successfully clears */
 	msleep(50);
-	smblib_masked_write(chg, USBIN_AICL_OPTIONS_CFG_REG,                          //reg=1380   bit2=0     USBIN_AICL_EN=Enable
-			USBIN_AICL_EN_BIT, USBIN_AICL_EN_BIT);
+
+	/* reg=1380, bit2=0, USBIN_AICL_EN=enable */
+	smblib_masked_write(chg, USBIN_AICL_OPTIONS_CFG_REG,
+				USBIN_AICL_EN_BIT, 
+                USBIN_AICL_EN_BIT, 1);
 }
 extern struct wake_lock asus_chg_lock;
 void asus_smblib_stay_awake(struct smb_charger *chg)
