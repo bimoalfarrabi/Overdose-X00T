@@ -1330,7 +1330,8 @@ static ssize_t mic_gain_show(struct kobject *kobj,
 	__ATTR(mic_gain, 0664,
 		mic_gain_show,
 		mic_gain_store);
- static ssize_t earpiece_gain_show(struct kobject *kobj,
+
+static ssize_t earpiece_gain_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
 	return snprintf(buf, PAGE_SIZE, "%d\n",
@@ -1351,10 +1352,11 @@ static ssize_t mic_gain_show(struct kobject *kobj,
 		earpiece_gain_show,
 		earpiece_gain_store);
 
+
 static struct attribute *sound_control_attrs[] = {
 		&headphone_gain_attribute.attr,
 		&mic_gain_attribute.attr,
-		&earpiece_gain_attribute.attr,
+        &earpiece_gain_attribute.attr,
 		NULL,
 };
 
