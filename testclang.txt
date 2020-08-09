@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+kernel_dir="${PWD}"
+CCACHE=$(command -v ccache)
+HOME=/home/viasco
+objdir="${kernel_dir}/out
+builddir="${kernel_dir}/build
+ZIMAGE=$kernel_dir/out/arch/arm64/boot/Image.gz-dtb
+export ARCH=arm64
+export KBUILD_BUILD_USER=Viasco
+export KBUILD_BUILD_HOST=Ubuntu
+export LD_LIBRARY_PATH="$HOME/android/toolchain/clang/bin/../lib:$PATH"
+# Compile plox
+function compile() {
+    make -s -j$(nproc) O=out darkonah_defconfig
+    PATH="$HOME/android/toolchain/clang/bin:${PATH}" \
+    make -C $(pwd) -j$(nproc) O=out \
+                   ARCH=arm64 \
+                   CC=clang \
+                   CLANG_TRIPLE=aarch64-linux-gnu- \
+                   CROSS_COMPILE=aarch64-linux-gnu- \
+                   CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+}
+compile
